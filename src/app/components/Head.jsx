@@ -6,13 +6,13 @@ import Link from 'next/link'
 const Head = () => {
 
     const navItem = [
+        { name: 'Explore', link: '/place' },
         { name: 'About', link: '/about' },
         { name: 'Contact', link: '/contact' },
-        { name: 'Explore', link: '/place' }
     ]
 
     return (
-        <div className='flex justify-between items-center px-8 py-4 gap-5 sticky top-0'>
+        <div className='flex justify-between items-center px-8 py-4 gap-5 sticky top-0 z-40'>
             <div className='flex justify-between w-full md:w-1/3 '>
                 <Link href='/' className='flex items-center gap-3' >
                     <div className='size-5'>
@@ -27,7 +27,7 @@ const Head = () => {
                 </Link>
                 <div className='flex flex-wrap gap-8'>
                     {navItem.map((item, index) => (
-                        <Link key={index} href={item.link} className="text-sm md:text-base font-semibold " >
+                        <Link key={index} href={item.link} className="text-sm md:text-base " >
                             <span>{item.name}</span>
                         </Link>
                     ))}
