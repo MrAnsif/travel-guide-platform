@@ -1,19 +1,19 @@
 import React from 'react'
-import { ModeToggle } from '../components/ModeToggle'
 import Link from 'next/link'
+import ThemeToggleButton from '../components/ui/theme-toggle-button'
 
 
 const Head = () => {
 
     const navItem = [
+        { name: 'Home', link: '/' },
         { name: 'Explore', link: '/place' },
         { name: 'About', link: '/about' },
-        { name: 'Contact', link: '/contact' },
     ]
 
     return (
-        <div className='flex justify-between items-center px-8 py-4 gap-5 sticky top-0 z-40'>
-            <div className='flex justify-between w-full md:w-1/3 '>
+        <div className='flex justify-between items-center px-8 py-4 gap-5 sticky top-0 z-40 bg-background'>
+            <div className='flex justify-between w-full '>
                 <Link href='/' className='flex items-center gap-3' >
                     <div className='size-5'>
                         <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -35,7 +35,7 @@ const Head = () => {
             </div>
 
             <div>
-                <ModeToggle />
+                <ThemeToggleButton variant="circle-blur" start="top-right" />
             </div>
         </div>
     )

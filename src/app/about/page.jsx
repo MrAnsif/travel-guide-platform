@@ -8,10 +8,10 @@ const page = () => {
       <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-10 px-6 md:px-20 py-16 md:py-24">
 
         {/* Left image side */}
-        <div className="w-full md:w-1/3 flex justify-center md:justify-start">
+        <div className=" w-full md:h-max md:w-1/3 flex justify-center md:justify-start">
           <div className="relative w-full max-w-md h-[320px] md:h-[450px]">
             <Image
-              src="https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=800&h=600&fit=crop" // Replace with your actual image
+              src="https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=800&h=600&fit=crop" 
               alt="About section image"
               fill
               className="object-cover"
@@ -21,7 +21,7 @@ const page = () => {
 
         {/* Right text side */}
         <div className="w-full md:w-2/3 flex flex-col gap-6 text-left">
-          <h2 className="text-[40px] md:text-[76px] font-bold leading-tight tracking-tight">
+          <h2 className="text-[50px] md:text-[100px] font-bold leading-tight tracking-tight">
             About us.
           </h2>
           <div className='grid grid-cols-2 gap-x-5 md:gap-x-20'>

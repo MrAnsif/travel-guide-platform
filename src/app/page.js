@@ -74,7 +74,7 @@ const page = () => {
                   <Input
                     type="text"
                     placeholder="Search for a neighborhood"
-                    className="pl-10 pr-20 h-12 sm:h-14 text-sm sm:text-base rounded-full border-none bg-white/95 backdrop-blur-sm shadow-lg"
+                    className="pl-10 pr-20 h-12 sm:h-14 text-sm sm:text-base rounded-full border-none bg-white/60 backdrop-blur-sm shadow-lg"
                   />
                   <Button 
                     size="sm"
