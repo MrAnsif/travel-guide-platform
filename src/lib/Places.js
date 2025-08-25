@@ -1,3 +1,63 @@
+import prisma from "./prisma";
+
+export async function getPlaceBySlug(slug) {
+
+    try {
+        const place = await prisma.place.findUnique({
+            where: { slug: slug },
+            include: { aiContent: true }
+        })
+        if (!place) {
+            return null
+        }
+        return place
+
+    } catch (error) {
+        console.error('Prisma error fetching place:', error);
+        return null;
+    }
+}
+
+export async function insertPlace() {
+    try {
+        const newPlace = await prisma.place.create({
+            data: {
+                slug: "shinjuku-tokyo-japan",
+                name: "Shinjuku, Tokyo",
+                placeType: "district",
+                country: "Japan",
+                state: "Tokyo",
+                city: "Tokyo",
+                latitude: 35.6938,
+                longitude: 139.7036,
+                population: 346235,
+                timezone: "Asia/Tokyo",
+                languages: ["ja", "en"], // ✅ already String[]
+                currency: "JPY",
+                overviewImage: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=800&h=600&fit=crop",
+                overviewThumbnail: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=400&h=300&fit=crop",
+                attractions: [
+                    "Tokyo Metropolitan Government Building",
+                    "Kabukicho entertainment district",
+                    "Takashimaya Department Store",
+                    "Golden Gai bars",
+                    "Shinjuku Gyoen National Garden"
+                ].join(", "),  // 👈 converted to single string
+                transportationMethods: ["JR Yamanote Line", "Tokyo Metro", "Walking", "Taxi"].join(", "),
+                emergencyNumber: "110 (Police), 119 (Fire/Medical)",
+            }
+
+        })
+        return {
+            ...newPlace,
+            createdAt: newPlace.createdAt.toISOString(), // Convert Date to string
+            updatedAt: newPlace.updatedAt.toISOString()  // Convert Date to string
+        }
+    } catch (error) {
+        console.error('Prisma error fetching place:', error);
+    }
+}
+
 export const places = [
     {
         id: "1",

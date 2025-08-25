@@ -15,9 +15,51 @@ datasource db {
 }
 
 model Place {
-  id        String @id @default(uuid())
-  slug      String @unique
-  name      String
-  placeType String @map("place_type")
-  
+  id                    String              @id @default(uuid())
+  slug                  String              @unique
+  name                  String
+  placeType             String              @map("place_type")
+  country               String
+  state                 String
+  city                  String
+  latitude              Float
+  longitude             Float
+  population            Int?
+  timezone              String
+  languages             String[]
+  currency              String?
+  overviewImage         String?             @map("overview_image")
+  overviewThumbnail     String              @map("overview_thumbnail")
+  attractions           String?
+  transportationMethods String?             @map("transportation_methods")
+  emergencyNumber       String?             @map("emergency_number")
+  createdAt             DateTime            @default(now()) @map("created_at")
+  updatedAt             DateTime            @updatedAt @map("updated_at")
+  aiContent             AIGeneratedContent?
+
+  @@map("places")
+}
+
+model AIGeneratedContent {
+  id                    String   @id @default(uuid())
+  placeId               String   @unique @map("place_id")
+  place                 Place    @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  generatedDescription  String?  @map("generated_description")
+  bestTimeToVisit       String?  @map("best_time_to_visit")
+  popularWith           String[]
+  cultureDos            String[] @map("culture_dos")
+  cultureDonts          String[] @map("culture_donts")
+  cultureCustoms        String[] @map("culture_customs")
+  diningEtiquette       String?  @map("dining_etiquette")
+  publicEtiquette       String?  @map("public_etiquette")
+  businessEtiquette     String?  @map("business_etiquette")
+  safetyRating          Float?   @map("safety_rating")
+  interpretedCrimeRate  String?  @map("interpreted_crime_rate")
+  commonRisks           String[]
+  safetyRecommendations String[] @map("safety_recommendations")
+  transportationTips    String[] @map("transportation_tips")
+  lastGenerated         DateTime @default(now()) @map("last_generated")
+  sourceHash            String?  @map("source_hash")
+
+  @@map("ai_generated_content")
 }
