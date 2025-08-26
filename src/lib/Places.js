@@ -21,35 +21,35 @@ export async function getPlaceBySlug(slug) {
 export async function insertPlace() {
     try {
         const newPlace = await prisma.place.create({
-           data: {
-    slug: 'brooklyn-new-york-usa',
-    name: 'Brooklyn, New York',
-    placeType: 'district',
-    country: 'United States',
-    state: 'New York',
-    city: 'New York City',
-    latitude: 40.6782,
-    longitude: -73.9442,
-    population: 2736074,
-    timezone: 'America/New_York',
-    languages: ['en', 'es'],
-    currency: 'USD',
-    overviewImage: 'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=800&h=600&fit=crop',
-    overviewThumbnail: 'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=400&h=300&fit=crop',
-    attractions: [
-        'Brooklyn Bridge',
-        'Prospect Park',
-        'Brooklyn Museum',
-        'Coney Island Boardwalk',
-        'Brooklyn Botanic Garden',
-    ],
-    transportationMethods: ['Subway', 'Bus', 'Walking', 'Taxi', 'Ferry'],
-    emergencyNumber: '911',
-}
+            data: {
+                slug: 'shinjuku-tokyo-japan',
+                name: 'Shinjuku, Tokyo',
+                placeType: 'district',
+                country: 'Japan',
+                state: 'Tokyo',
+                city: 'Tokyo',
+                latitude: 35.6938,
+                longitude: 139.7036,
+                population: 346235,
+                timezone: 'Asia/Tokyo',
+                languages: ['ja', 'en'],
+                currency: 'JPY',
+                overviewImage: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=800&h=600&fit=crop',
+                overviewThumbnail: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=400&h=300&fit=crop',
+                attractions: [
+                    'Tokyo Metropolitan Government Building',
+                    'Kabukicho entertainment district',
+                    'Takashimaya Department Store',
+                    'Golden Gai bars',
+                    'Shinjuku Gyoen National Garden',
+                ],
+                transportationMethods: ['JR Yamanote Line', 'Tokyo Metro', 'Walking', 'Taxi'],
+                emergencyNumber: '110 (Police), 119 (Fire/Medical)',
+            }
         })
         return newPlace
     } catch (error) {
-        console.error('Prisma error fetching place:', error);
+        console.error('Prisma error posting place:', error);
     }
 }
 
