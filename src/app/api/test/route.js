@@ -2,7 +2,7 @@ import { getPlaceBySlug, insertPlace } from "../../../lib/Places";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-    const data = await getPlaceBySlug('kollam')
+    const data = await getPlaceBySlug('shinjuku-tokyo-japan')
     return NextResponse.json(data)
 }
 
