@@ -8,5 +8,9 @@ export async function GET() {
 
 export async function POST() {
     const data = await insertPlace()
-    return NextResponse.json(data)
+    return new NextResponse(JSON.stringify(data), {
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
 }

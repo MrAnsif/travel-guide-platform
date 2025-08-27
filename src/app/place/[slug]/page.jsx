@@ -3,13 +3,30 @@ import React, { useState } from 'react';
 import Overview from './components/Overview';
 import Safety from './components/Safety';
 import Culture from './components/Culture';
-import { places } from '../../../lib/Places';
-import { use } from 'react';
+import { notFound, useParams } from 'next/navigation';
+import useSWR from 'swr';
 
-const page = ({ params }) => {
 
-  const { slug } = use(params);
+export default function page() {
 
+  const fetcher = (...args) => fetch(...args).then(res => res.json());
+
+  const params = useParams()
+  const slug = params.slug
+  
+  console.log('slug is ', slug)
+
+  const { data, error, isLoading } = useSWR(
+    slug ? `/api/places/${slug}` : null,
+    fetcher,
+    {
+      revalidateOnFocus: false
+    }
+  )
+  console.log('place is ', data)
+
+
+  
   const [activeTab, setActiveTab] = useState('overview');
 
   const tabs = [
@@ -18,28 +35,31 @@ const page = ({ params }) => {
     { id: 'safety', label: 'Safety' }
   ];
 
-  const place = places.find((p) => p.slug === slug)
-
-
   const renderTabContent = () => {
     switch (activeTab) {
       case 'overview':
         return (
-          <Overview data={place.overview} />
+          <Overview data={place} />
         );
       case 'culture':
         return (
-          <Culture data={place.culture} />
+          <Culture data={place} />
         );
       case 'safety':
         return (
-          <Safety data={place.safety} />
+          <Safety data={place} />
         );
       default:
         return null;
     }
   };
 
+  if (isLoading) return <div>Loading...</div>
+  if (error) return <div>Error loading places</div>
+  // if (!data) {
+  //   notFound(); // This will show the 404 page
+  // }
+  let place = data
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -90,5 +110,3 @@ const page = ({ params }) => {
     </div>
   )
 }
-
-export default page

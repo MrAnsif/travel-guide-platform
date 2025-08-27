@@ -90,7 +90,7 @@ const Safety = ({ data }) => {
               Common Risks
             </p>
             <ul className="list-disc pl-5 text-muted-foreground">
-              {data.commonRisks.map((risk, i) => (
+              {data.aiSafety.commonRisks.map((risk, i) => (
                 <li key={i}>{risk}</li>
               ))}
             </ul>
@@ -114,7 +114,7 @@ const Safety = ({ data }) => {
           Recommendations
         </h2>
         <div className="px-4">
-          {data.recommendations.map((rec, i) => (
+          {data.aiSafety.recommendations.map((rec, i) => (
             <label key={i} className="flex gap-x-3 py-3 flex-row items-start">
               <input
                 type="checkbox"

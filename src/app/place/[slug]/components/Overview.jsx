@@ -45,7 +45,7 @@ const Overview = ({ data }) => {
 
               <div className="border-t py-3">
                 <p className="text-muted-foreground text-sm">Popular With</p>
-                <p className=" text-sm">{data.popularWith.join(", ")}</p>
+                <p className=" text-sm">{data.aiOverview.popularWith.join(", ")}</p>
               </div>
             </div>
           </div>

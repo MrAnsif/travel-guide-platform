@@ -3,12 +3,23 @@ import React, { useState } from 'react';
 import { Search, ChevronDown } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
-import { places } from '../../lib/Places';
 import Link from 'next/link';
 import useSWR from 'swr';
 
 
+const fetcher = (...args) => fetch(...args).then(res => res.json());
+
 const page = () => {
+  const [page, setPage] = useState(1)
+  const { data, error, isLoading } = useSWR(
+    `api/places?page=${page}&limit=12`,
+    fetcher,
+    {
+      keepPreviousData: true,
+    }
+  )
+
+
 
   const [selectedFilters, setSelectedFilters] = useState({
     culture: false,
@@ -21,6 +32,10 @@ const page = () => {
     { key: 'etiquette', label: 'Etiquette' },
     { key: 'safety', label: 'Safety' }
   ];
+
+  if (isLoading) return <div>Loading...</div>
+  if (error) return <div>Error loading places</div>
+  let places = data.places
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -88,7 +103,7 @@ const page = () => {
                   <div className="relative overflow-hidden rounded-xl">
                     <div
                       className="w-full aspect-video bg-cover bg-center bg-no-repeat transition-transform duration-300 group-hover:scale-105"
-                      style={{ backgroundImage: `url("${place.overview.image}")` }}
+                      style={{ backgroundImage: `url("${place.overviewThumbnail}")` }}
                     >
                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     </div>
@@ -98,7 +113,7 @@ const page = () => {
                       {place.name}
                     </h3>
                     <p className="text-muted-foreground text-sm font-normal leading-normal">
-                      {place.description}
+                      {place.placeType}
                     </p>
                   </div>
                 </div>
