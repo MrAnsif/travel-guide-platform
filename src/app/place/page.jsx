@@ -5,6 +5,9 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { places } from '../../lib/Places';
 import Link from 'next/link';
+import useSWR from 'swr';
+
+
 const page = () => {
 
   const [selectedFilters, setSelectedFilters] = useState({
