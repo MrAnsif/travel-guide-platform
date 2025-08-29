@@ -5,6 +5,7 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import Link from 'next/link';
 import useSWR from 'swr';
+import SearchBar from '../components/SearchBar';
 
 
 const fetcher = (...args) => fetch(...args).then(res => res.json());
@@ -58,18 +59,7 @@ const page = () => {
           </div>
 
           {/* Search Bar */}
-          <div className="mb-6">
-            <div className="relative">
-              <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
-                <Search className="h-5 w-5" />
-              </div>
-              <Input
-                type="text"
-                placeholder="Search for a place"
-                className="pl-10 h-12 text-base bg-accent/50 border-none focus:bg-accent/70 transition-colors"
-              />
-            </div>
-          </div>
+          <SearchBar />
 
           {/* Filter Buttons */}
           <div className="mb-6">
