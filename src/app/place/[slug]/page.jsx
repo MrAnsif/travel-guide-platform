@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Overview from './components/Overview';
 import Safety from './components/Safety';
 import Culture from './components/Culture';
-import { notFound, useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import useSWR from 'swr';
 
 
@@ -14,8 +14,6 @@ export default function page() {
   const params = useParams()
   const slug = params.slug
   
-  console.log('slug is ', slug)
-
   const { data, error, isLoading } = useSWR(
     slug ? `/api/places/${slug}` : null,
     fetcher,

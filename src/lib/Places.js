@@ -1,6 +1,6 @@
 import prisma from "./prisma";
 
-
+//Get all place
 const DEFAULT_PAGE_SIZE = 20
 const MAX_PAGE_SIZE = 50
 
@@ -146,6 +146,62 @@ export async function getPlaceBySlug(slug) {
 
 
 
+//get featured place
+const featuredCache = {
+    data: null,
+    timestamp: 0
+}
+const featured_cache_TTL = 1000 * 30
+
+export async function getFeaturedPlaces(limit = 6) {
+    const cacheKey = `featured:${limit}`
+
+    if (featuredCache.data && (Date.now() - featuredCache.timestamp < featured_cache_TTL)) {
+        console.log('featured place cache hit')
+        return featuredCache.data.slice(0, limit)
+    }
+
+    try {
+        console.log('featured place cache miss')
+        const featuredPlaces = await prisma.place.findMany({
+            where: {
+                // overviewThumbnail: { not: null },
+            },
+            select: {
+                id: true,
+                slug: true,
+                name: true,
+                overviewThumbnail: true,
+                placeType: true,
+            },
+            orderBy: {
+                createdAt: 'desc'
+            },
+            take: Math.min(limit, 12)
+        })
+
+        featuredCache.data = featuredPlaces
+        featuredCache.timestamp = Date.now()
+
+        return featuredPlaces.slice(0, limit)
+
+    } catch (error) {
+        console.error('Error fetching featured places', error);
+        return []
+
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
 export async function insertPlace() {
     try {
         const newPlace = await prisma.place.create({
@@ -181,6 +237,12 @@ export async function insertPlace() {
         console.error('Prisma error posting place:', error);
     }
 }
+
+
+
+
+
+
 
 
 
