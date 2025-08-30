@@ -1,7 +1,5 @@
 'use client'
 import React, { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
-import { Button } from '../components/ui/button';
 import Link from 'next/link';
 import useSWR from 'swr';
 import SearchBar from '../components/SearchBar';
@@ -19,13 +17,6 @@ const page = () => {
     }
   )
 
-
-
-  const [selectedFilters, setSelectedFilters] = useState({
-    culture: false,
-    etiquette: false,
-    safety: false
-  });
 
   const filterCategories = [
     { key: 'culture', label: 'Culture' },
@@ -59,30 +50,6 @@ const page = () => {
 
           {/* Search Bar */}
           <SearchBar />
-
-          {/* Filter Buttons */}
-          <div className="mb-6">
-            <div className="flex flex-wrap gap-3">
-              {filterCategories.map(({ key, label }) => (
-                <Button
-                  key={key}
-                  variant="secondary"
-                  size="sm"
-                  className={`h-8 rounded-full px-4 transition-all duration-200 ${selectedFilters[key]
-                    ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-                    : 'bg-accent hover:bg-accent/80'
-                    }`}
-                  onClick={() => setSelectedFilters(prev => ({
-                    ...prev,
-                    [key]: !prev[key]
-                  }))}
-                >
-                  <span className="text-sm font-medium">{label}</span>
-                  <ChevronDown className="ml-2 h-4 w-4" />
-                </Button>
-              ))}
-            </div>
-          </div>
 
           {/* Places Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-12">

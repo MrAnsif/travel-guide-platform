@@ -1,11 +1,24 @@
+'use client'
 import Link from 'next/link';
-import { searchPlaces } from '../../lib/Places';
+import { useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useSearch } from '../../hooks/useSearch';
 import SearchBar from '../components/SearchBar';
 
-export default async function SearchPage({ searchParams }) {
-  const params = await searchParams;
-  const query = params.q;
-  const results = query ? await searchPlaces(query, 20) : [];
+export default function SearchPage() {
+  const searchParams = useSearchParams();
+  const query = searchParams.get('q') || '';
+  const { query: searchQuery, setQuery, results, isLoading, error } = useSearch();
+
+  // Sync the URL query with the search hook
+  useEffect(() => {
+    if (query && query !== searchQuery) {
+      setQuery(query);
+    }
+  }, [query, searchQuery, setQuery]);
+
+  // Use the results from useSearch hook instead of server-side results
+  const searchResults = results || [];
 
   return (
     <div className="container py-8 mx-auto max-w-4xl">
@@ -17,14 +30,22 @@ export default async function SearchPage({ searchParams }) {
         <p className="text-gray-600">Enter a search term to find destinations.</p>
       )}
 
-      {query && results.length === 0 && (
+      {query && !isLoading && searchResults.length === 0 && !error && (
         <p className="text-gray-600">No results found for "{query}".</p>
       )}
 
-      <SearchBar results={results} query={query} />
+      {error && (
+        <p className="text-red-600">Search error: {error}</p>
+      )}
+
+      {isLoading && query && (
+        <p className="text-gray-600">Searching...</p>
+      )}
+
+      <SearchBar results={searchResults} query={query} />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-12">
-        {results.map((place) => (
+        {searchResults.map((place) => (
           <Link href={`/place/${place.slug}`} key={place.id} className="group cursor-pointer">
             <div className="flex flex-col gap-3 p-2 rounded-xl hover:bg-accent/50 transition-colors duration-200">
               <div className="relative overflow-hidden rounded-xl">
@@ -47,11 +68,6 @@ export default async function SearchPage({ searchParams }) {
           </Link>
         ))}
       </div>
-
     </div>
   );
 }
-
-export const metadata = {
-  title: 'Search Destinations',
-};
