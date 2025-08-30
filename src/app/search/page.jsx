@@ -1,11 +1,12 @@
 'use client'
+import { Suspense } from 'react';
 import Link from 'next/link';
 import { useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useSearch } from '../../hooks/useSearch';
 import SearchBar from '../components/SearchBar';
 
-export default function SearchPage() {
+function SearchPageContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
   const { query: searchQuery, setQuery, results, isLoading, error } = useSearch();
@@ -69,5 +70,20 @@ export default function SearchPage() {
         ))}
       </div>
     </div>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={
+      <div className="container py-8 mx-auto max-w-4xl">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 rounded mb-8 w-64"></div>
+          <div className="h-4 bg-gray-200 rounded mb-4 w-48"></div>
+        </div>
+      </div>
+    }>
+      <SearchPageContent />
+    </Suspense>
   );
 }
