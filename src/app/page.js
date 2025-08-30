@@ -1,9 +1,7 @@
 import React from 'react'
-import { Search } from 'lucide-react';
-import { Button } from './components/ui/button';
-import { Input } from './components/ui/input';
 import { getFeaturedPlaces } from '../lib/Places';
 import Link from 'next/link';
+import SearchComponent from './components/SearchHome';
 
 export default async function page() {
 
@@ -31,24 +29,8 @@ export default async function page() {
               </div>
 
               {/* Search Bar */}
-              <div className="w-full max-w-lg">
-                <div className="relative flex items-center">
-                  <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
-                    <Search className="h-5 w-5" />
-                  </div>
-                  <Input
-                    type="text"
-                    placeholder="Search for a neighborhood"
-                    className="pl-10 pr-20 h-12 sm:h-14 text-sm sm:text-base rounded-full border-none bg-white/60 backdrop-blur-sm shadow-lg"
-                  />
-                  <Button
-                    size="sm"
-                    className="absolute right-1 top-1/2 transform -translate-y-1/2 rounded-full h-10 sm:h-12 px-4 sm:px-6 bg-orange-500 hover:bg-orange-600 text-white font-semibold"
-                  >
-                    Search
-                  </Button>
-                </div>
-              </div>
+              <SearchComponent />
+
             </div>
           </div>
         </div>
@@ -90,6 +72,6 @@ export default async function page() {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   )
 }

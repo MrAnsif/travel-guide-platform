@@ -52,7 +52,7 @@ export default function SearchBar() {
           </div>
         )}
 
-        {!error && !isLoading && results.length === 0 && (
+        {!error && !isLoading && results.length === 0 && query.length !== 0 && (
           <div className="p-3 sm:p-4 text-muted-foreground text-center text-sm">
             No results found for "{query}"
           </div>
