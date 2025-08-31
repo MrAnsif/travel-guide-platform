@@ -70,18 +70,21 @@ export async function generatePlaceData(placeName) {
         });
 
         if (!response.ok) {
-            throw new Error(`AI API error: ${response.status}`);
+            throw new Error(`AI API error: ${response.statusText}`);
         }
 
         const data = await response.json();
         const content = data.choices[0]?.message?.content;
+        const cleanContent = content.replace(/^```json\s*|\s*```$/g, '').trim();
+
+        console.log('AI res:', content)
 
         if (!content) {
             throw new Error('No content generated');
         }
 
         // Parse and return structured data
-        return parseAIResponse(content, placeName);
+        return parseAIResponse(cleanContent, placeName);
 
     } catch (error) {
         console.error('AI generation error:', error);
@@ -91,6 +94,13 @@ export async function generatePlaceData(placeName) {
 }
 
 async function parseAIResponse(content, placeName) {
+
+    function generateSlug(name) {
+        return name.toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/(^-|-$)/g, '');
+    }
+
     try {
         const parsed = JSON.parse(content);
         return {
@@ -131,7 +141,7 @@ async function parseAIResponse(content, placeName) {
                 tips: parsed.transportation?.tips || ['Use official transportation services']
             },
             attractions: parsed.attractions || [`Explore ${placeName}`],
-            overviewThumbnail: await getPlaceImage(name, country)
+            overviewThumbnail: await getPlaceImage(parsed.name, parsed.country)
         };
     } catch (error) {
         console.log('Error in parsing ai content: ', error)
@@ -142,30 +152,26 @@ async function parseAIResponse(content, placeName) {
 // get unsplash image
 async function getPlaceImage(name, country) {
     try {
-        const query = encodeURIComponent(`${name} ${country} turist`);
+        const query = encodeURIComponent(`${name} ${country} tourist`);
         const response = await fetch(`https://api.unsplash.com/search/photos?query=${query}&client_id=${process.env.UNSPLASH_ACCESS_KEY}`);
         const data = await response.json();
-        return data.result?.urls.full;
+        console.log('unsplash link:', data.results?.[0]?.urls?.regular)
+        return data.results?.[0]?.urls?.regular
     } catch (error) {
         console.error('Image fetch error:', error);
     }
     return null;
 }
 
-function generateSlug(name) {
-    return name.toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '');
-}
 
 function createFallbackData(placeName) {
-  return {
-    name: placeName,
-    city: 'Unknown',
-    country: 'Unknown',
-    description: `Cultural and travel information about ${placeName}.`,
-    overviewThumbnail: null,
-    aiGenerated: true,
-    isFallback: true
-  };
+    return {
+        name: placeName,
+        city: 'Unknown',
+        country: 'Unknown',
+        description: `Cultural and travel information about ${placeName}.`,
+        overviewThumbnail: null,
+        aiGenerated: true,
+        isFallback: true
+    };
 }

@@ -18,15 +18,9 @@ const page = () => {
   )
 
 
-  const filterCategories = [
-    { key: 'culture', label: 'Culture' },
-    { key: 'etiquette', label: 'Etiquette' },
-    { key: 'safety', label: 'Safety' }
-  ];
-
   if (isLoading) return <div>Loading...</div>
   if (error) return <div>Error loading places</div>
-  let places = data.places
+  let places = data.places || []
 
   return (
     <div className="min-h-screen bg-background text-foreground">

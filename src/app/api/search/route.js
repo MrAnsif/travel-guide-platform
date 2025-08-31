@@ -15,7 +15,8 @@ export async function GET(req) {
 
         // const results = await searchPlaces(query, limit)
         const results = await searchOrGeneratePlace(query, limit)
-        const response = NextResponse.json(results)
+        console.log('search res:', results)
+        const response = NextResponse.json(results.results)
 
         response.headers.set(
             'Cache-Control',

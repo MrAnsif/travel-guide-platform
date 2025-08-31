@@ -5,6 +5,15 @@ import prisma from "./prisma";
 const DEFAULT_PAGE_SIZE = 20
 const MAX_PAGE_SIZE = 50
 
+function sanitizeString(str) {
+    if (!str) return str;
+    // Remove null bytes and other problematic characters
+    return str
+        .replace(/\0/g, '')
+        .replace(/[\uFFFD\uFFFE\uFFFF]/g, '')
+        .trim();
+}
+
 export async function getAllPlaces({
     page = 1,
     limit = DEFAULT_PAGE_SIZE,
@@ -16,38 +25,45 @@ export async function getAllPlaces({
 
         const whereClause = {};
 
-        const [places, totalCount] = await Promise.all([
-            prisma.place.findMany({
-                where: whereClause,
-                select: {
-                    id: true,
-                    slug: true,
-                    name: true,
-                    placeType: true,
-                    overviewThumbnail: true,
-                    aiContent: {
-                        select: {
-                            generatedDescription: true
-                        }
+        const places = await prisma.place.findMany({
+            where: whereClause,
+            select: {
+                id: true,
+                slug: true,
+                name: true,
+                placeType: true,
+                overviewThumbnail: true,
+                aiContent: {
+                    select: {
+                        generatedDescription: true
                     }
-                },
-                orderBy: {
-                    createdAt: 'desc' // or 'name': 'asc'
-                },
-                take,
-                skip: cursor ? undefined : skip,
-                ...(cursor && { cursor: { id: cursor } }),
-            }),
-            prisma.place.count({ where: whereClause })
-        ])
+                }
+            },
+            orderBy: {
+                createdAt: 'desc'
+            },
+            take,
+            skip: cursor ? undefined : skip,
+            ...(cursor && { cursor: { id: cursor } }),
+        });
+
+        const totalCount = await prisma.place.count({
+            where: whereClause,
+        });
+
 
         const totalPages = Math.ceil(totalCount / take);
         const hasNextPage = (page * take) < totalCount;
         const hasPrevPage = page > 1;
 
+        // Sanitize the data before returning
         const serializedPlaces = places.map(place => ({
             ...place,
-            createdAt: place.createdAt?.toISOString(),
+            name: sanitizeString(place.name),
+            overviewThumbnail: sanitizeString(place.overviewThumbnail),
+            aiContent: place.aiContent ? {
+                generatedDescription: sanitizeString(place.aiContent.generatedDescription)
+            } : null
         }));
 
         const nextCursor = places.length > 0 ? places[places.length - 1].id : null;
@@ -69,6 +85,7 @@ export async function getAllPlaces({
         throw error;
     }
 }
+
 
 
 // get place by slug
@@ -433,6 +450,8 @@ export async function isValidPlaceName(placeName) {
 
     try {
         const hasValidCoordinates = await validateWithGeocoding(normalizedName);
+        console.log('geo validating: ', hasValidCoordinates)
+
         return hasValidCoordinates;
     } catch (error) {
         console.log('Not a valid place name', error)
@@ -444,14 +463,14 @@ async function validateWithGeocoding(placeName) {
     try {
         const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(placeName)}&limit=1`)
         if (!response.ok) {
-            return true
+            return false
         }
         const data = await response.json()
         return data && data.length > 0
 
     } catch (error) {
         console.error('Geocoding validation error:', error);
-        return true;
+        return false;
     }
 }
 
