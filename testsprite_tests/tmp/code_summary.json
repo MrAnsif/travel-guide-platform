@@ -1,0 +1,78 @@
+{
+  "tech_stack": ["JavaScript", "Next.js", "Prisma", "PostgreSQL", "Tailwind CSS", "SWR"],
+  "features": [
+    {
+      "name": "Home Page",
+      "description": "Landing page with featured destinations and search functionality",
+      "files": ["src/app/page.js", "src/app/components/SearchHome.js"],
+      "api_doc": {}
+    },
+    {
+      "name": "Search API",
+      "description": "API endpoint for searching places by name, country, or city",
+      "files": ["src/app/api/search/route.js", "src/hooks/useSearch.js"],
+      "api_doc": {
+        "paths": {
+          "/api/search": {
+            "get": {
+              "parameters": [
+                {
+                  "name": "q",
+                  "in": "query",
+                  "required": true,
+                  "description": "Search query string"
+                },
+                {
+                  "name": "limit",
+                  "in": "query",
+                  "required": false,
+                  "description": "Maximum number of results to return"
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "List of places matching the search query"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Place Detail Page",
+      "description": "Page displaying detailed information about a specific place with tabs for Overview, Culture & Etiquette, and Safety",
+      "files": ["src/app/place/[slug]/page.jsx", "src/app/place/[slug]/components/Overview.jsx", "src/app/place/[slug]/components/Culture.jsx", "src/app/place/[slug]/components/Safety.jsx"],
+      "api_doc": {}
+    },
+    {
+      "name": "Place API",
+      "description": "API for retrieving place data by slug",
+      "files": ["src/lib/Places.js"],
+      "api_doc": {
+        "paths": {
+          "/api/places/{slug}": {
+            "get": {
+              "parameters": [
+                {
+                  "name": "slug",
+                  "in": "path",
+                  "required": true,
+                  "description": "Unique slug identifier for the place"
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Detailed information about the place"
+                },
+                "404": {
+                  "description": "Place not found"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

@@ -209,7 +209,6 @@ const cleanupCache = () => {
     }
 }
 
-
 export async function searchPlaces(query, limit = 10) {
     if (!query || typeof query !== 'string' || query.trim().length < 2) {
         return []
@@ -282,6 +281,182 @@ export async function searchPlaces(query, limit = 10) {
         return []
     }
 }
+
+
+//Search or generate place data
+export async function searchOrGeneratePlace(query, limit = 8) {
+    try {
+        // 1. First, try to search existing places
+        const existingResults = await searchPlaces(query, limit);
+
+        if (existingResults.length > 0) {
+            return {
+                results: existingResults,
+                generated: false,
+                source: 'database'
+            };
+        }
+
+        // 2. If no results, validate if it's a real place
+        const isValidPlace = await isValidPlaceName(query);
+
+        if (!isValidPlace) {
+            return {
+                results: [],
+                generated: false,
+                source: 'invalid_query',
+                message: 'Please enter a valid place name'
+            };
+        }
+
+        // 3. Generate new place data
+        console.log(`Generating new place data for: ${query}`);
+        const generatedData = await generatePlaceData(query);
+
+        // 4. Save to database
+        const savedPlace = await saveGeneratedPlace(generatedData);
+
+        // 5. Return the generated result
+        const result = {
+            id: savedPlace.id,
+            slug: savedPlace.slug,
+            name: savedPlace.name,
+            city: savedPlace.city,
+            country: savedPlace.country,
+            overviewThumbnail: savedPlace.overviewThumbnail,
+            shortDescription: savedPlace.shortDescription,
+            aiGenerated: true,
+            isNew: true
+        };
+
+        return {
+            results: [result],
+            generated: true,
+            source: 'ai_generated'
+        };
+
+    } catch (error) {
+        console.error('Search or generate error:', error);
+
+        // Return empty results on error, but don't break the UI
+        return {
+            results: [],
+            generated: false,
+            source: 'error',
+            message: 'Unable to search at the moment. Please try again.'
+        };
+    }
+}
+
+async function saveGeneratedPlace(placeData) {
+    try {
+        const newPlace = await prisma.place.create({
+            data: {
+                name: placeData.name,
+                slug: placeData.slug || generateSlug(placeData.name),
+                description: placeData.description,
+                placeType: placeData.placeType,
+                country: placeData.country,
+                state: placeData.state,
+                city: placeData.city,
+                latitude: placeData.coordinates?.latitude,
+                longitude: placeData.coordinates?.longitude,
+                population: placeData.population,
+                timezone: placeData.timezone,
+                languages: placeData.languages,
+                currency: placeData.currency,
+                overviewImage: placeData.overviewImage,
+                overviewThumbnail: placeData.overviewThumbnail,
+                shortDescription: placeData.description?.substring(0, 150) + '...',
+                attractions: placeData.attractions,
+                transportationMethods: placeData.transportation?.mainMethods,
+                emergencyNumber: placeData.emergencyNumber,
+                aiGenerated: true,
+                generationStatus: 'completed',
+                lastVerified: new Date(),
+                aiContent: {
+                    create: {
+                        generatedDescription: placeData.description,
+                        bestTimeToVisit: placeData.overview?.bestTimeToVisit,
+                        averageStayDuration: placeData.overview?.averageStayDuration,
+                        popularWith: placeData.overview?.popularWith,
+                        cultureDos: placeData.culture?.dos,
+                        cultureDonts: placeData.culture?.donts,
+                        cultureCustoms: placeData.culture?.customs,
+                        diningEtiquette: placeData.culture?.etiquette?.dining,
+                        publicEtiquette: placeData.culture?.etiquette?.public,
+                        businessEtiquette: placeData.culture?.etiquette?.business,
+                        safetyRating: placeData.safety?.overallRating,
+                        interpretedCrimeRate: placeData.safety?.overallRating,
+                        commonRisks: placeData.safety?.commonRisks,
+                        safetyRecommendations: placeData.safety?.recommendations,
+                        transportationTips: placeData.transportation?.tips,
+                        lastGenerated: new Date(),
+                    }
+                }
+            },
+            include: {
+                aiContent: true
+            }
+        });
+
+        return newPlace;
+    } catch (error) {
+        console.error('Error saving generated place:', error);
+        throw new Error('Failed to save generated place data');
+    }
+}
+function generateSlug(name) {
+    return name
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^\w-]+/g, '')
+        .replace(/--+/g, '-')
+        .replace(/^-+/, '')
+        .replace(/-+$/, '');
+}
+
+
+
+//validate place name
+export async function isValidPlaceName(placeName) {
+    if (!placeName || typeof placeName !== 'string') {
+        return false
+    }
+
+    const normalizedName = placeName.trim();
+
+    if (normalizedName.length < 2 || !/[a-zA-Z]/.test(normalizedName)) {
+        return false;
+    }
+
+    try {
+        const hasValidCoordinates = await validateWithGeocoding(normalizedName);
+        return hasValidCoordinates;
+    } catch (error) {
+        console.log('Not a valid place name', error)
+        return normalizedName.length >= 2;
+    }
+}
+
+async function validateWithGeocoding(placeName) {
+    try {
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(placeName)}&limit=1`)
+        if (!response.ok) {
+            return true
+        }
+        const data = await response.json()
+        return data && data.length > 0
+
+    } catch (error) {
+        console.error('Geocoding validation error:', error);
+        return true;
+    }
+}
+
+
+
+
 
 
 
