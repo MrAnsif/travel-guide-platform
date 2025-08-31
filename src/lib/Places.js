@@ -1,3 +1,4 @@
+import { generatePlaceData } from "./aiGenerator";
 import prisma from "./prisma";
 
 //Get all place

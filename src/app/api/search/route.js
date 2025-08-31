@@ -1,4 +1,4 @@
-import { searchPlaces } from "../../../lib/Places"
+import { searchOrGeneratePlace, searchPlaces } from "../../../lib/Places"
 import { NextResponse } from "next/server"
 
 
@@ -13,7 +13,8 @@ export async function GET(req) {
             return NextResponse.json([], { status: 200 })
         }
 
-        const results = await searchPlaces(query, limit)
+        // const results = await searchPlaces(query, limit)
+        const results = await searchOrGeneratePlace(query, limit)
         const response = NextResponse.json(results)
 
         response.headers.set(
