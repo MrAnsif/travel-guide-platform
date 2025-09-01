@@ -4,7 +4,7 @@ import React from 'react'
 
 const Overview = ({ data }) => {
   console.log('over data', data)
-  
+
   // Error handling for missing data
   if (!data) {
     return (
@@ -18,10 +18,10 @@ const Overview = ({ data }) => {
     name = "Unknown Place",
     placeType = "Unknown",
     city = "Unknown City",
-    state = "Unknown State", 
+    state = "Unknown State",
     country = "Unknown Country",
     population,
-    overviewImage,
+    // overviewImage,
     overviewThumbnail,
     attractions = "",
     languages = [],
@@ -43,7 +43,7 @@ const Overview = ({ data }) => {
           <div
             className="min-h-80 rounded-xl bg-cover bg-center flex items-end p-4 text-2xl md:text-3xl font-bold text-white"
             style={{
-              backgroundImage: `linear-gradient(0deg, rgba(0,0,0,0.4) 15%, transparent 45%), url(${overviewImage || '/placeholder-image.jpg'})`,
+              backgroundImage: `linear-gradient(0deg, rgba(0,0,0,0.4) 15%, transparent 45%), url(${overviewThumbnail || '/placeholder-image.jpg'})`,
             }}
           >
             Explore {name}
@@ -134,13 +134,18 @@ const Overview = ({ data }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="border rounded-lg p-4">
               <h3 className="font-bold text-lg mb-3">Transportation</h3>
-              <p className="text-sm">{transportationMethods || "Not specified"}</p>
+              {transportationMethods?.map(e => (
+                <ul className="list-disc list-inside">
+                  <li>{e}</li>
+                </ul>
+              )) || <p>No specific</p>}
             </div>
-            
-            <div className="border rounded-lg p-4">
-              <h3 className="font-bold text-lg mb-3">Emergency Contact</h3>
-              <p className="text-sm font-semibold text-red-600">{emergencyNumber}</p>
-            </div>
+            {emergencyNumber &&
+              <div className="border rounded-lg p-4">
+                <h3 className="font-bold text-lg mb-3">Emergency Contact</h3>
+                <p className="text-sm font-semibold text-red-600">{emergencyNumber}</p>
+              </div>
+            }
           </div>
         </div>
       </main>

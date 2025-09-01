@@ -1,4 +1,4 @@
-import { searchOrGeneratePlace, searchPlaces } from "../../../lib/Places"
+import { searchOrValidatePlace } from "../../../lib/Places"
 import { NextResponse } from "next/server"
 
 
@@ -13,10 +13,9 @@ export async function GET(req) {
             return NextResponse.json([], { status: 200 })
         }
 
-        // const results = await searchPlaces(query, limit)
-        const results = await searchOrGeneratePlace(query, limit)
-        console.log('search res:', results)
-        const response = NextResponse.json(results.results)
+        const results = await searchOrValidatePlace(query, limit)
+        console.log('search res in api route :', results)
+        const response = NextResponse.json(results)
 
         response.headers.set(
             'Cache-Control',

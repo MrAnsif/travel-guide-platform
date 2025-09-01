@@ -4,11 +4,14 @@ import { useSearch } from '../../hooks/useSearch';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Search } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import { Input } from './ui/input';
+import { useState } from 'react';
+import Loader from './GeneratingLoader'
 
 
 export default function SearchBar() {
+  const [ispopup, setIspopup] = useState(false)
   const { query, setQuery, results, isLoading, error } = useSearch();
   const router = useRouter();
   const handleSubmit = (e) => {
@@ -22,6 +25,40 @@ export default function SearchBar() {
   const handleResultClick = () => {
     setQuery('');
   };
+
+  const handleResultGeneration = async (place) => {
+    try {
+      setQuery('');
+      setIspopup(true)
+
+      const response = await fetch('/api/places/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          placeName: place.name,
+          placeDetails: place.display_name
+        }),
+      });
+
+      const data = await response.json()
+      console.log('frontend data from AI : ', data)
+
+      if (data.success) {
+        router.push(`/place/${data.data.results[0].slug}`);
+      } else {
+        throw new Error(data.error);
+      }
+
+    } catch (error) {
+      console.error('Generation error:', error);
+      // Handle error in UI
+    } finally {
+      setIspopup(false);
+      setQuery('');
+    }
+  }
 
   return (
     <div className="mb-6 relative">
@@ -44,8 +81,18 @@ export default function SearchBar() {
         )}
       </form>
 
+      {/* ai generation popup */}
+      {ispopup && (
+        <div className="backdrop-blur-md w-screen h-screen fixed inset-0 z-50 flex items-center justify-center">
+          <div className="relative flex bg-popover border w-2xs h-60 justify-center items-center rounded-2xl" >
+            <Loader />
+            <X className='cursor-pointer absolute top-0 right-0 m-3' onClick={() => setIspopup(false)} />
+          </div>
+        </div>
+      )}
+
       {/* Search Results Dropdown */}
-      <div className="absolute top-full left-0 right-0 bg-background border border-border rounded-lg shadow-xl mt-1 max-h-96 overflow-y-auto z-50">
+      <div className="absolute top-full left-0 right-0 bg-background border border-border rounded-lg shadow-xl mt-1 max-h-96 overflow-y-auto z-30">
         {error && (
           <div className="p-3 sm:p-4 text-destructive text-sm">
             Search error: {error}
@@ -58,9 +105,55 @@ export default function SearchBar() {
           </div>
         )}
 
-        {!error && results.length > 0 && (
+        {!error && results.validPlaces && (
           <div className="divide-y divide-border">
-            {results.map((place) => (
+            {results.data.map((place) => (
+              <div
+                key={place.name}
+                onClick={() => handleResultGeneration(place)}
+                className="block p-3 sm:p-4 hover:bg-accent hover:text-accent-foreground transition-colors"
+                style={{
+                  backgroundImage: `
+                    radial-gradient(125% 125% at 20% 50%, var(--background) 60%, var(--chart-2) 100%)
+                  `,
+                  backgroundSize: "100% 100%",
+                }}
+
+              >
+                <div className="flex items-center space-x-2 sm:space-x-3">
+                  {/* {place.overviewThumbnail && (
+                    <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 relative">
+                      <Image
+                        src={place.overviewThumbnail}
+                        alt={place.name}
+                        fill
+                        className="object-cover rounded"
+                        sizes="(max-width: 640px) 40px, 48px"
+                      />
+                    </div>
+                  )} */}
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-medium text-foreground truncate text-sm sm:text-base">
+                      {place.name}
+                    </h4>
+                    <p className="text-xs sm:text-sm text-muted-foreground truncate">
+                      {place.display_name}
+                    </p>
+                    {place.shortDescription && (
+                      <p className="text-xs text-muted-foreground mt-1 line-clamp-1 hidden sm:block">
+                        {place.addresstype}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {!error && results.results?.length > 0 && (
+          <div className="divide-y divide-border">
+            {results.results.map((place) => (
               <Link
                 key={place.id}
                 href={`/place/${place.slug}`}
@@ -96,7 +189,7 @@ export default function SearchBar() {
               </Link>
             ))}
 
-            {results.length >= 8 && (
+            {results.results?.length >= 8 && (
               <Link
                 href={`/search?q=${encodeURIComponent(query)}`}
                 onClick={handleResultClick}

@@ -302,7 +302,7 @@ export async function searchPlaces(query, limit = 10) {
 
 
 //Search or generate place data
-export async function searchOrGeneratePlace(query, limit = 8) {
+export async function searchOrValidatePlace(query, limit = 8) {
     try {
         // 1. First, try to search existing places
         const existingResults = await searchPlaces(query, limit);
@@ -318,7 +318,7 @@ export async function searchOrGeneratePlace(query, limit = 8) {
         // 2. If no results, validate if it's a real place
         const isValidPlace = await isValidPlaceName(query);
 
-        if (!isValidPlace) {
+        if (!isValidPlace.result) {
             return {
                 results: [],
                 generated: false,
@@ -327,34 +327,20 @@ export async function searchOrGeneratePlace(query, limit = 8) {
             };
         }
 
-        // 3. Generate new place data
-        console.log(`Generating new place data for: ${query}`);
-        const generatedData = await generatePlaceData(query);
-
-        // 4. Save to database
-        const savedPlace = await saveGeneratedPlace(generatedData);
-
-        // 5. Return the generated result
-        const result = {
-            id: savedPlace.id,
-            slug: savedPlace.slug,
-            name: savedPlace.name,
-            city: savedPlace.city,
-            country: savedPlace.country,
-            overviewThumbnail: savedPlace.overviewThumbnail,
-            shortDescription: savedPlace.shortDescription,
-            aiGenerated: true,
-            isNew: true
-        };
+        //return valid place data
+        const data = isValidPlace.data.map(item => ({
+            name: item.name,
+            display_name: item.display_name,
+            addresstype: item.addresstype
+        }));
 
         return {
-            results: [result],
-            generated: true,
-            source: 'ai_generated'
-        };
+            data,
+            validPlaces: true
+        }
 
     } catch (error) {
-        console.error('Search or generate error:', error);
+        console.error('Search or validate error:', error);
 
         // Return empty results on error, but don't break the UI
         return {
@@ -365,6 +351,36 @@ export async function searchOrGeneratePlace(query, limit = 8) {
         };
     }
 }
+
+export async function generateAndSavePlace(placeName, placeDetails) {
+    // 3. Generate new place data
+    console.log(`Generating new place data for: ${placeName, placeDetails}`);
+    const generatedData = await generatePlaceData(placeName, placeDetails);
+
+    // 4. Save to database
+    const savedPlace = await saveGeneratedPlace(generatedData);
+
+    // 5. Return the generated result
+    const result = {
+        id: savedPlace.id,
+        slug: savedPlace.slug,
+        name: savedPlace.name,
+        city: savedPlace.city,
+        country: savedPlace.country,
+        overviewThumbnail: savedPlace.overviewThumbnail,
+        shortDescription: savedPlace.shortDescription,
+        aiGenerated: true,
+        isNew: true
+    };
+
+    return {
+        results: [result],
+        generated: true,
+        source: 'ai_generated'
+    };
+
+}
+
 
 async function saveGeneratedPlace(placeData) {
     try {
@@ -461,12 +477,17 @@ export async function isValidPlaceName(placeName) {
 
 async function validateWithGeocoding(placeName) {
     try {
-        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(placeName)}&limit=1`)
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(placeName)}&limit=3`)
+
         if (!response.ok) {
             return false
         }
         const data = await response.json()
-        return data && data.length > 0
+
+        return {
+            result: data && data.length > 0,
+            data: data
+        }
 
     } catch (error) {
         console.error('Geocoding validation error:', error);

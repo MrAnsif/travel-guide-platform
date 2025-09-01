@@ -10,7 +10,7 @@ export function useSearch() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const [debouncedQuery] = useDebounce(query, 300); // 300ms debounce
+    const [debouncedQuery] = useDebounce(query, 500); // 500ms debounce
 
     const performSearch = useCallback(async (searchQuery) => {
         if (!searchQuery || searchQuery.length < 2) {
