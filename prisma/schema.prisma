@@ -12,21 +12,26 @@ model Place {
   id                    String              @id @default(uuid())
   slug                  String              @unique
   name                  String
+  description           String              @default("Travel destination information") // Added required field with default
+  shortDescription      String?             @map("short_description") // Made optional
   placeType             String              @map("place_type")
   country               String
-  state                 String
+  state                 String?              
   city                  String
-  latitude              Float
-  longitude             Float
+  latitude              Float?              // Made optional in case coordinates unavailable
+  longitude             Float?              // Made optional in case coordinates unavailable
   population            Int?
-  timezone              String
+  timezone              String?             // Made optional
   languages             String[]
   currency              String?
   overviewImage         String?             @map("overview_image")
-  overviewThumbnail     String              @map("overview_thumbnail")
-  attractions           String?
-  transportationMethods String?             @map("transportation_methods")
+  overviewThumbnail     String?             @map("overview_thumbnail") // Made optional
+  attractions           String[]            // Changed to array
+  transportationMethods String[]            @map("transportation_methods") // Changed to array
   emergencyNumber       String?             @map("emergency_number")
+  aiGenerated           Boolean             @default(false) @map("ai_generated") // Added field
+  generationStatus      String?             @map("generation_status") // Added field
+  lastVerified          DateTime?           @map("last_verified") // Added field
   createdAt             DateTime            @default(now()) @map("created_at")
   updatedAt             DateTime            @updatedAt @map("updated_at")
   aiContent             AIGeneratedContent?
@@ -42,6 +47,7 @@ model AIGeneratedContent {
   placeId               String   @unique @map("place_id")
   generatedDescription  String?  @map("generated_description")
   bestTimeToVisit       String?  @map("best_time_to_visit")
+  averageStayDuration   String?  @map("average_stay_duration") // Added missing field
   popularWith           String[]
   cultureDos            String[] @map("culture_dos")
   cultureDonts          String[] @map("culture_donts")
@@ -50,7 +56,7 @@ model AIGeneratedContent {
   publicEtiquette       String?  @map("public_etiquette")
   businessEtiquette     String?  @map("business_etiquette")
   safetyRating          Float?   @map("safety_rating")
-  interpretedCrimeRate  String?  @map("interpreted_crime_rate")
+  interpretedCrimeRate  String?  @map("interpreted_crime_rate") // Keep as string
   commonRisks           String[]
   safetyRecommendations String[] @map("safety_recommendations")
   transportationTips    String[] @map("transportation_tips")

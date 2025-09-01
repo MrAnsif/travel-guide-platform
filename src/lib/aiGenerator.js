@@ -19,47 +19,49 @@ export async function generatePlaceData(placeName) {
 
                         Return ONLY valid JSON in this exact structure:
                         {
-                        "name": "Full official name",
-                        "slug": "url-friendly-slug",
-                        "description": "2-3 sentence engaging description",
-                        "placeType": "district|city|neighborhood|landmark",
-                        "country": "Country name",
-                        "state": "State/region if applicable",
-                        "city": "City name",
-                        "coordinates": {
-                            "latitude": number,
-                            "longitude": number
-                        },
-                        "population": number,
-                        "timezone": "Continent/City",
-                        "languages": ["primary", "secondary"],
-                        "currency": "Currency code",
-                        "overview": {
-                            "bestTimeToVisit": "Season or months",
-                            "averageStayDuration": "e.g., 2-3 days",
-                            "popularWith": ["type of travelers"]
-                        },
-                        "culture": {
-                            "dos": ["5-7 specific important cultural do's"],
-                            "donts": ["5-7 specific important cultural don'ts"],
-                            "customs": ["3-5 unique local customs"],
-                            "etiquette": {
-                            "dining": "Specific dining etiquette",
-                            "public": "Public behavior norms",
-                            "business": "Business etiquette if applicable"
-                            }
-                        },
-                        "safety": {
-                            "overallRating": 8.5,
-                            "commonRisks": ["specific risks"],
-                            "recommendations": ["practical safety tips"]
-                        },
-                        "transportation": {
-                            "mainMethods": ["primary transport options"],
-                            "tips": ["practical transportation tips"]
-                        },
-                        "attractions": ["5-8 main attractions"]
-                        }
+  "name": "Full official name",
+  "slug": "url-friendly-slug", 
+  "description": "Detailed 3-4 sentence engaging description of the place",
+  "placeType": "district|city|neighborhood...",
+  "country": "Country name",
+  "state": "State/region if applicable or null",
+  "city": "City name", 
+  "coordinates": {
+    "latitude": number,
+    "longitude": number
+  },
+  "population": number,
+  "timezone": "Continent/City",
+  "languages": ["primary", "secondary"],
+  "currency": "Currency code",
+  "emergencyNumber": "Local emergency number (e.g., 911, 112)",
+  "overview": {
+    "bestTimeToVisit": "Season or months",
+    "averageStayDuration": "e.g., 2-3 days", 
+    "popularWith": ["type of travelers"]
+  },
+  "culture": {
+    "dos": ["5-7 specific important cultural do's"],
+    "donts": ["5-7 specific important cultural don'ts"], 
+    "customs": ["3-5 unique local customs"],
+    "etiquette": {
+      "dining": "Specific dining etiquette",
+      "public": "Public behavior norms",
+      "business": "Business etiquette if applicable"
+    }
+  },
+  "safety": {
+    "overallRating": 8.5,
+    "crimeRateDescription": "Brief description of crime rate (low/moderate/high with context)",
+    "commonRisks": ["specific risks"],
+    "recommendations": ["practical safety tips"]
+  },
+  "transportation": {
+    "mainMethods": ["primary transport options"],
+    "tips": ["practical transportation tips"]
+  },
+  "attractions": ["5-8 main attractions"]
+}
 
                         Ensure data is accurate, culturally sensitive, and practical for visitors/travelers.`
                     }
@@ -107,7 +109,7 @@ async function parseAIResponse(content, placeName) {
             name: parsed.name || placeName,
             slug: parsed.slug || generateSlug(placeName),
             description: parsed.description || `Travel information about ${placeName}`,
-            placeType: parsed.placeType || 'landmark',
+            placeType: parsed.placeType || 'Unknown',
             country: parsed.country || 'Unknown',
             state: parsed.state || null,
             city: parsed.city || 'Unknown',
@@ -171,6 +173,7 @@ function createFallbackData(placeName) {
         country: 'Unknown',
         description: `Cultural and travel information about ${placeName}.`,
         overviewThumbnail: null,
+        placeType: 'Unknown',
         aiGenerated: true,
         isFallback: true
     };
