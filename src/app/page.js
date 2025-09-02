@@ -12,9 +12,9 @@ export default async function page() {
       {/* Hero Section */}
       <div className="relative px-4 sm:px-6 lg:px-8 xl:px-40">
         <div className="mx-auto max-w-4xl">
-          <div className="relative overflow-hidden rounded-none sm:rounded-xl">
+          <div className="relative rounded-none sm:rounded-xl">
             <div
-              className="flex min-h-[400px] sm:min-h-[480px] flex-col gap-6 bg-cover bg-center bg-no-repeat items-center justify-center p-4 sm:p-8"
+              className="flex min-h-[400px] sm:min-h-[480px] flex-col gap-6 bg-cover bg-center bg-no-repeat items-center justify-center p-4 sm:p-8 rounded-none sm:rounded-xl"
               style={{
                 backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%), url("https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=1200&h=800&fit=crop")`
               }}

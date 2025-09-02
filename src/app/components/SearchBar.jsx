@@ -107,9 +107,9 @@ export default function SearchBar() {
 
         {!error && results.validPlaces && (
           <div className="divide-y divide-border">
-            {results.data.map((place) => (
+            {results.data.map((place, index) => (
               <div
-                key={place.name}
+                key={index}
                 onClick={() => handleResultGeneration(place)}
                 className="block p-3 sm:p-4 hover:bg-accent hover:text-accent-foreground transition-colors"
                 style={{
@@ -121,17 +121,7 @@ export default function SearchBar() {
 
               >
                 <div className="flex items-center space-x-2 sm:space-x-3">
-                  {/* {place.overviewThumbnail && (
-                    <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 relative">
-                      <Image
-                        src={place.overviewThumbnail}
-                        alt={place.name}
-                        fill
-                        className="object-cover rounded"
-                        sizes="(max-width: 640px) 40px, 48px"
-                      />
-                    </div>
-                  )} */}
+                 
                   <div className="flex-1 min-w-0">
                     <h4 className="font-medium text-foreground truncate text-sm sm:text-base">
                       {place.name}

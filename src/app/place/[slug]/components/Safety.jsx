@@ -1,10 +1,8 @@
 import React from 'react'
 import { Card, CardContent } from "../../../components/ui/card";
+import ChartBarMultiple from '../../../components/LineChart'
+
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
   Tooltip,
   ResponsiveContainer,
   PieChart,
@@ -22,15 +20,15 @@ const Safety = ({ data }) => {
     );
   }
 
+  // Extract safety data from the nested aiSafety object
   const {
     aiSafety = {},
-    emergencyNumber = "Unknown",
-    overallRating,
-    crimeRate,
-    safeTimes
+    emergencyNumber = "",
   } = data;
 
   const {
+    overallRating = 0,
+    interpretedCrimeRate = [],
     commonRisks = [],
     recommendations = []
   } = aiSafety;
@@ -46,7 +44,7 @@ const Safety = ({ data }) => {
   const COLORS = ["#e77223", "#F4EFEB"];
 
   // Check if any safety data exists
-  const hasSafetyData = commonRisks.length > 0 || recommendations.length > 0 || overallRating || crimeRate || safeTimes;
+  const hasSafetyData = commonRisks.length > 0 || recommendations.length > 0 || overallRating > 0 || interpretedCrimeRate.length > 0;
 
   return (
     <div className="relative flex size-full min-h-screen flex-col bg-background overflow-x-hidden font-sans">
@@ -91,7 +89,7 @@ const Safety = ({ data }) => {
                           />
                         ))}
                       </Pie>
-                      <Tooltip />
+                      <Tooltip formatter={(value) => [`${value}/10`, 'Rating']} />
                     </PieChart>
                   </ResponsiveContainer>
                 </div>
@@ -122,13 +120,8 @@ const Safety = ({ data }) => {
           Safety Details
         </h2>
         <div className="flex flex-col gap-4 px-4">
-          {/* Crime Rate */}
-          <Card className="p-6">
-            <p className="text-base font-medium text-foreground">Crime Rate</p>
-            <p className="text-lg font-bold">
-              {crimeRate || "Data not available"}
-            </p>
-          </Card>
+
+          <ChartBarMultiple chartData={interpretedCrimeRate} />
 
           {/* Common Risks */}
           <Card className="p-6">
@@ -151,14 +144,9 @@ const Safety = ({ data }) => {
             <p className="text-base font-medium text-foreground">
               Emergency Numbers
             </p>
-            <p className="text-lg font-bold text-red-600">{emergencyNumber}</p>
-          </Card>
-
-          {/* Safe Times */}
-          <Card className="p-6">
-            <p className="text-base font-medium text-foreground">Safe Times</p>
-            <p className="text-lg font-bold">
-              {safeTimes || "Data not available"}
+            <p className="text-lg font-bold text-red-600">{emergencyNumber || "911"}</p>
+            <p className="text-sm text-muted-foreground mt-1">
+              Dial in case of emergency
             </p>
           </Card>
         </div>

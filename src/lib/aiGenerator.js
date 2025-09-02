@@ -34,7 +34,7 @@ export async function generatePlaceData(placeName, placeDetails) {
   "timezone": "Continent/City",
   "languages": ["primary", "secondary"],
   "currency": "Currency code",
-  "emergencyNumber": "Local emergency number (e.g., 911, 112)",
+  "emergencyNumber": "Local emergency number (e.g., 911, 112, 100, 102)",
   "overview": {
     "bestTimeToVisit": "Season or months",
     "averageStayDuration": "e.g., 2-3 days", 
@@ -52,7 +52,13 @@ export async function generatePlaceData(placeName, placeDetails) {
   },
   "safety": {
     "overallRating": 8.5,
-    "crimeRateDescription": "Brief description of crime rate (low/moderate/high with context)",
+    "interpretedCrimeRate": [
+    { "year": 2020, "destinationCrimeRate": 70, "countryAvgCrimeRate": 68 },
+    { "year": 2021, "destinationCrimeRate": 65, "countryAvgCrimeRate": 67 },
+    { "year": 2022, "destinationCrimeRate": 62, "countryAvgCrimeRate": 66 },
+    { "year": 2023, "destinationCrimeRate": 58, "countryAvgCrimeRate": 65 },
+    { "year": 2024, "destinationCrimeRate": 55, "countryAvgCrimeRate": 65.2 }
+  ],
     "commonRisks": ["specific risks"],
     "recommendations": ["practical safety tips"]
   },
@@ -116,6 +122,7 @@ async function parseAIResponse(content, placeName) {
             timezone: parsed.timezone || 'UTC',
             languages: parsed.languages || ['English'],
             currency: parsed.currency || 'USD',
+            emergencyNumber: parsed.emergencyNumber || '',
             overview: {
                 bestTimeToVisit: parsed.overview?.bestTimeToVisit || 'Year-round',
                 averageStayDuration: parsed.overview?.averageStayDuration || '1-2 days',
@@ -133,6 +140,7 @@ async function parseAIResponse(content, placeName) {
             },
             safety: {
                 overallRating: parsed.safety?.overallRating || 7.0,
+                interpretedCrimeRate: parsed.safety?.interpretedCrimeRate || [],
                 commonRisks: parsed.safety?.commonRisks || ['General travel risks'],
                 recommendations: parsed.safety?.recommendations || ['Stay aware of surroundings']
             },

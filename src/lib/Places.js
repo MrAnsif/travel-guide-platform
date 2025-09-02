@@ -421,7 +421,7 @@ async function saveGeneratedPlace(placeData) {
                         publicEtiquette: placeData.culture?.etiquette?.public || null,
                         businessEtiquette: placeData.culture?.etiquette?.business || null,
                         safetyRating: placeData.safety?.overallRating || null,
-                        interpretedCrimeRate: placeData.safety?.crimeRateDescription || null, // String field
+                        interpretedCrimeRate: placeData.safety?.interpretedCrimeRate || [], 
                         commonRisks: placeData.safety?.commonRisks || [],
                         safetyRecommendations: placeData.safety?.recommendations || [],
                         transportationTips: placeData.transportation?.tips || [],

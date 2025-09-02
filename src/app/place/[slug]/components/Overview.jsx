@@ -27,7 +27,7 @@ const Overview = ({ data }) => {
     languages = [],
     currency = "Unknown",
     timezone = "Unknown",
-    transportationMethods = "",
+    transportationMethods = [],
     emergencyNumber = "Unknown",
     aiOverview = {}
   } = data;
@@ -134,8 +134,8 @@ const Overview = ({ data }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="border rounded-lg p-4">
               <h3 className="font-bold text-lg mb-3">Transportation</h3>
-              {transportationMethods?.map(e => (
-                <ul className="list-disc list-inside">
+              {transportationMethods?.map((e, i) => (
+                <ul key={i} className="list-disc list-inside">
                   <li>{e}</li>
                 </ul>
               )) || <p>No specific</p>}
