@@ -126,7 +126,11 @@ const Overview = ({ data }) => {
           {attractions && (
             <div className="border rounded-lg p-4">
               <h3 className="font-bold text-lg mb-3">Popular Attractions</h3>
-              <p className="text-sm">{attractions}</p>
+              {attractions?.map((place, index) => (
+                <ul key={index} className="list-disc list-inside">
+                  <li>{place}</li>
+                </ul>
+              ))}
             </div>
           )}
 

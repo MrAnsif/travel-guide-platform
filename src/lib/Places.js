@@ -21,7 +21,8 @@ export async function getAllPlaces({
 } = {}) {
     try {
         const take = Math.min(parseInt(limit), MAX_PAGE_SIZE)
-        const skip = cursor ? 1 : (parseInt(page) - 1) * take
+        // const skip = cursor ? 1 : (parseInt(page) - 1) * take
+
 
         const whereClause = {};
 
@@ -31,6 +32,8 @@ export async function getAllPlaces({
                 id: true,
                 slug: true,
                 name: true,
+                state: true,
+                country: true,
                 placeType: true,
                 overviewThumbnail: true,
                 aiContent: {
@@ -43,8 +46,7 @@ export async function getAllPlaces({
                 createdAt: 'desc'
             },
             take,
-            skip: cursor ? undefined : skip,
-            ...(cursor && { cursor: { id: cursor } }),
+           ...(cursor && { cursor: { id: cursor }, skip: 1 }),
         });
 
         const totalCount = await prisma.place.count({
@@ -421,7 +423,7 @@ async function saveGeneratedPlace(placeData) {
                         publicEtiquette: placeData.culture?.etiquette?.public || null,
                         businessEtiquette: placeData.culture?.etiquette?.business || null,
                         safetyRating: placeData.safety?.overallRating || null,
-                        interpretedCrimeRate: placeData.safety?.interpretedCrimeRate || [], 
+                        interpretedCrimeRate: placeData.safety?.interpretedCrimeRate || [],
                         commonRisks: placeData.safety?.commonRisks || [],
                         safetyRecommendations: placeData.safety?.recommendations || [],
                         transportationTips: placeData.transportation?.tips || [],

@@ -1,26 +1,70 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import useSWR from 'swr';
+import useSWRInfinite from 'swr/infinite';
+import { useInView } from 'react-intersection-observer';
 import SearchBar from '../components/SearchBar';
-
 
 const fetcher = (...args) => fetch(...args).then(res => res.json());
 
 const page = () => {
-  const [page, setPage] = useState(1)
-  const { data, error, isLoading } = useSWR(
-    `api/places?page=${page}&limit=12`,
+  const { ref, inView } = useInView({
+    threshold: 0,
+    triggerOnce: false,
+    rootMargin: '100px',
+  });
+
+  const getKey = (pageIndex, previousPageData) => {
+    // If no previous page data and not first page, return null
+    if (previousPageData && !previousPageData.places?.length) return null;
+
+    // first page
+    if (pageIndex === 0) return `api/places?page=1&limit=12`;
+
+    // Add cursor-based navigation
+    const lastItem = previousPageData?.places[previousPageData.places.length - 1];
+    if (lastItem?.id) {
+      return `api/places?cursor=${lastItem.id}&limit=12`;
+    }
+
+    return null; // Return null if we can't get more data
+  };
+
+  const { data, error, size, setSize, isLoading, isValidating } = useSWRInfinite(
+    getKey,
     fetcher,
     {
-      keepPreviousData: true,
+      revalidateFirstPage: false,
+      revalidateAll: false,
+      persistSize: true,
     }
-  )
+  );
+  // Simplified state calculations
+  const places = data ? data.flatMap(page => page?.places || []) : [];
+  const isLoadingMore = isLoading || (size > 0 && data && !data[size - 1]);
+  const isEmpty = data?.[0]?.places?.length === 0;
+  const isReachingEnd = isEmpty || (data && data[data.length - 1]?.places?.length < 12);
+
+  // Trigger load more when scrolling to bottom
+  useEffect(() => {
+    if (inView && !isLoading && !isReachingEnd) {
+      setSize(size + 1);
+    }
+  }, [inView, isLoading, size, setSize, isReachingEnd]);
 
 
-  if (isLoading) return <div>Loading...</div>
-  if (error) return <div>Error loading places</div>
-  let places = data.places || []
+  if (isLoading && !data) return (
+    <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+      <div className="w-5 h-5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+
+    </div>
+  );
+
+  if (error) return (
+    <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+      <div>Error loading places</div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -47,8 +91,8 @@ const page = () => {
 
           {/* Places Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-12">
-            {places.map((place) => (
-              <Link href={`/place/${place.slug}`} key={place.id} className="group cursor-pointer">
+            {places.map((place, index) => (
+              <Link href={`/place/${place.slug}`} key={index} className="group cursor-pointer">
                 <div className="flex flex-col gap-3 p-2 rounded-xl hover:bg-accent/50 transition-colors duration-200">
                   <div className="relative overflow-hidden rounded-xl">
                     <div
@@ -70,11 +114,28 @@ const page = () => {
               </Link>
             ))}
           </div>
+
+          {/* Loading indicator or end message */}
+          {!isReachingEnd && !isLoadingMore && (
+            <div ref={ref} className="h-10" /> // Hidden loading trigger
+          )}
+
+          {isLoadingMore && !isReachingEnd && (
+            <div className="flex justify-center py-8">
+              <div className="w-5 h-5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+
+            </div>
+          )}
+
+          {isReachingEnd && places.length > 0 && (
+            <div className="flex justify-center py-8">
+              <div className="text-muted-foreground">No more places to load</div>
+            </div>
+          )}
         </div>
       </div>
-
     </div>
-  )
-}
+  );
+};
 
-export default page
+export default page;

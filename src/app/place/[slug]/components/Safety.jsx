@@ -159,11 +159,6 @@ const Safety = ({ data }) => {
           {recommendations.length > 0 ? (
             recommendations.map((rec, i) => (
               <label key={i} className="flex gap-x-3 py-3 flex-row items-start cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="h-5 w-5 mt-1 rounded border-muted border-2 bg-transparent text-primary 
-                    checked:bg-primary checked:border-primary focus:ring-0 focus:outline-none cursor-pointer"
-                />
                 <p className="text-foreground text-base leading-relaxed">{rec}</p>
               </label>
             ))

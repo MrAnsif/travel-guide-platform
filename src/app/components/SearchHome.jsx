@@ -113,7 +113,7 @@ export default function SearchComponent() {
                 <div
                   key={index}
                   onClick={() => handleResultGeneration(place)}
-                  className="block p-3 sm:p-4 hover:bg-accent hover:text-accent-foreground transition-colors"
+                  className="block p-3 sm:p-4 hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
                   style={{
                     backgroundImage: `
                     radial-gradient(125% 125% at 20% 50%, var(--background) 60%, var(--chart-2) 100%)
