@@ -117,7 +117,7 @@ const page = () => {
 
           {/* Loading indicator or end message */}
           {!isReachingEnd && !isLoadingMore && (
-            <div ref={ref} className="h-10" /> // Hidden loading trigger
+            <div ref={ref} className="h-10" /> 
           )}
 
           {isLoadingMore && !isReachingEnd && (
