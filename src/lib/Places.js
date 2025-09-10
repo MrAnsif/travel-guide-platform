@@ -46,7 +46,7 @@ export async function getAllPlaces({
                 createdAt: 'desc'
             },
             take,
-           ...(cursor && { cursor: { id: cursor }, skip: 1 }),
+            ...(cursor && { cursor: { id: cursor }, skip: 1 }),
         });
 
         const totalCount = await prisma.place.count({
@@ -479,7 +479,16 @@ export async function isValidPlaceName(placeName) {
 
 async function validateWithGeocoding(placeName) {
     try {
-        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(placeName)}&limit=3`)
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(placeName)}&limit=3`, {
+            method: 'GET',
+            headers: {
+                'User-Agent': 'LocalInsight/1.0 (LocalInsight@gmail.com)', // Required by Nominatim
+                'Accept': 'application/json',
+                'Accept-Language': 'en',
+            },
+            // Important for Vercel
+            cache: 'no-store'
+        })
 
         if (!response.ok) {
             return false
