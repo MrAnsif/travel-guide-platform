@@ -5,6 +5,8 @@ export async function generatePlaceData(placeName, placeDetails) {
             headers: {
                 'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
                 'Content-Type': 'application/json',
+                'HTTP-Referer': process.env.VERCEL_URL || 'http://localhost:3000', // Add referer for OpenRouter
+                'X-Title': 'Travel Place Generator' // Add title for OpenRouter
             },
             body: JSON.stringify({
                 model: "mistralai/mistral-small-3.1-24b-instruct:free",
@@ -105,7 +107,13 @@ Ensure to respond in simple English.`
         return parseAIResponse(cleanContent, placeName);
 
     } catch (error) {
-        console.error('AI generation error:', error);
+        console.error('AI generation error:', {
+            message: error.message,
+            stack: error.stack,
+            placeName,
+            placeDetails
+        });
+        throw error; // CRITICAL: Re-throw the error
     }
 }
 
@@ -163,7 +171,7 @@ async function parseAIResponse(content, placeName) {
         };
     } catch (error) {
         console.log('Error in parsing ai content: ', error)
-        return [];
+        throw new Error(`Failed to parse AI response: ${error.message}`); // Throw instead of returning []
     }
 }
 
@@ -171,7 +179,22 @@ async function parseAIResponse(content, placeName) {
 async function getPlaceImage(name, country) {
     try {
         const query = encodeURIComponent(`${name} ${country} placetovisit`);
-        const response = await fetch(`https://api.unsplash.com/search/photos?query=${query}&client_id=${process.env.UNSPLASH_ACCESS_KEY}`);
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        const response = await fetch(`https://api.unsplash.com/search/photos?query=${query}&client_id=${process.env.UNSPLASH_ACCESS_KEY}`, {
+            signal: controller.signal,
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+            console.error('Unsplash API error:', response.status);
+            return null;
+        }
+
         const data = await response.json();
         console.log('unsplash link:', data.results?.[0]?.urls?.regular)
         return data.results?.[0]?.urls?.regular

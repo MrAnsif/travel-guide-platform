@@ -22,7 +22,7 @@ export async function POST(request) {
     } catch (error) {
         console.error('Place generation error:', error);
         return NextResponse.json(
-            { error: 'Failed to generate place data' },
+            { error: 'Failed to generate place data, ', error },
             { status: 500 }
         );
     }
