@@ -7,6 +7,7 @@ export default async function page() {
 
   const featuredPlaces = await getFeaturedPlaces(6)
 
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Hero Section */}
@@ -44,7 +45,7 @@ export default async function page() {
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {featuredPlaces ?
+            {featuredPlaces && featuredPlaces.length > 0 ?
               featuredPlaces.map((destination) => (
                 <Link href={`/place/${destination.slug}`} key={destination.id} className="group cursor-pointer">
                   <div className="flex flex-col gap-3 p-2 rounded-xl hover:bg-accent/50 transition-colors">

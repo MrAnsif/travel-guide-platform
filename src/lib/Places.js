@@ -197,7 +197,7 @@ export async function getFeaturedPlaces(limit = 6) {
             orderBy: {
                 createdAt: 'desc'
             },
-            take: Math.min(limit, 12)
+            take: Math.min(limit, 6)
         })
 
         featuredCache.data = featuredPlaces
