@@ -293,7 +293,7 @@ export async function searchPlaces(query, limit = 10) {
             data: results,
             timestamp: Date.now()
         })
-        // console.log('search result:', results)
+        console.log('search result in function: ', results)
         return results
 
     } catch (error) {
@@ -303,7 +303,7 @@ export async function searchPlaces(query, limit = 10) {
 }
 
 
-//Search or generate place data
+//Search or Validate place data
 export async function searchOrValidatePlace(query, limit = 8) {
     try {
         // 1. First, try to search existing places

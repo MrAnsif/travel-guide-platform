@@ -22,6 +22,8 @@ export default function SearchBar() {
     }
   };
 
+  console.log('search result in frontend: ', results)
+
   const handleResultClick = () => {
     setQuery('');
   };
