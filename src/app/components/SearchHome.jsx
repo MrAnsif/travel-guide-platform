@@ -37,8 +37,8 @@ export default function SearchComponent() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          placeName: place.name,
-          placeDetails: place.display_name
+          placeName: place.name || '',
+          placeDetails: place.display_name || ''
         }),
       });
 
@@ -137,7 +137,7 @@ export default function SearchComponent() {
                         </p>
                       )}
                     </div>
-                    
+
                     <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
                       width="30.000000pt" height="20.000000pt" viewBox="0 0 334.000000 295.000000" className='fill-chart-2'
                       preserveAspectRatio="xMidYMid meet">

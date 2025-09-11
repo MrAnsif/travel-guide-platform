@@ -63,7 +63,7 @@ export default function page() {
               <div className='text-muted-foreground'>No featured destination to suggest.</div>
             }
 
-            {featuredPlaces && !isLoading && featuredPlaces.length > 0 &&
+            {featuredPlaces && !isLoading && featuredPlaces.length > 0 ?
               featuredPlaces.map((destination) => (
                 <Link href={`/place/${destination.slug}`} key={destination.id} className="group cursor-pointer">
                   <div className="flex flex-col gap-3 p-2 rounded-xl hover:bg-accent/50 transition-colors">
@@ -85,7 +85,8 @@ export default function page() {
                     </div>
                   </div>
                 </Link>
-              ))
+              )) :
+              <div className='text-muted-foreground'>No featured destination to suggest.</div>
             }
           </div>
         </div>

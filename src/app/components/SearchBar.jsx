@@ -39,8 +39,8 @@ export default function SearchBar() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          placeName: place.name,
-          placeDetails: place.display_name
+          placeName: place.name || '',
+          placeDetails: place.display_name || ''
         }),
       });
 
