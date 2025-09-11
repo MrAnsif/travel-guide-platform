@@ -1,11 +1,22 @@
+'use client'
+
 import React from 'react'
-import { getFeaturedPlaces } from '../lib/Places';
 import Link from 'next/link';
 import SearchComponent from './components/SearchHome';
+import useSWR from 'swr';
 
-export default async function page() {
+export default function page() {
 
-  const featuredPlaces = await getFeaturedPlaces(6)
+  const fetcher = (...args) => fetch(...args).then(res => res.json());
+
+  const { data, error, isLoading } = useSWR('/api/places/featuredPlace',
+    fetcher,
+    {
+      revalidateOnFocus: false
+    }
+  )
+  const featuredPlaces = data
+  console.log('featured place data frontend: ', featuredPlaces)
 
 
   return (
@@ -45,7 +56,14 @@ export default async function page() {
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {featuredPlaces && featuredPlaces.length > 0 ?
+            {isLoading &&
+              <div className="w-5 h-5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+            }
+            {error &&
+              <div className='text-muted-foreground'>No featured destination to suggest.</div>
+            }
+
+            {featuredPlaces && !isLoading && featuredPlaces.length > 0 &&
               featuredPlaces.map((destination) => (
                 <Link href={`/place/${destination.slug}`} key={destination.id} className="group cursor-pointer">
                   <div className="flex flex-col gap-3 p-2 rounded-xl hover:bg-accent/50 transition-colors">
@@ -67,8 +85,7 @@ export default async function page() {
                     </div>
                   </div>
                 </Link>
-              )) :
-              <div>No featured destination to suggest.</div>
+              ))
             }
           </div>
         </div>

@@ -27,14 +27,14 @@ const Head = () => {
                 </Link>
                 <div className='flex flex-wrap gap-8'>
                     {navItem.map((item, index) => (
-                        <Link key={index} href={item.link} className="text-sm md:text-base px-3 py-1 border border-dashed border-foreground hover:border-solid transition-all duration-700 " >
+                        <Link key={index} href={item.link} className="text-sm md:text-base px-2 py-1.5 md:px-3 md:py-1.5 border border-dashed border-foreground hover:border-solid transition-all duration-700 rounded-md" >
                             <span>{item.name}</span>
                         </Link>
                     ))}
                 </div>
             </div>
 
-            <div>
+            <div >
                 <ThemeToggleButton variant="circle-blur" start="top-right" />
             </div>
         </div>

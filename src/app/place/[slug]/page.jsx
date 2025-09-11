@@ -13,7 +13,7 @@ export default function page() {
 
   const params = useParams()
   const slug = params.slug
-  
+
   const { data, error, isLoading } = useSWR(
     slug ? `/api/places/${slug}` : null,
     fetcher,
@@ -24,7 +24,7 @@ export default function page() {
   console.log('place is ', data)
 
 
-  
+
   const [activeTab, setActiveTab] = useState('overview');
 
   const tabs = [
@@ -52,7 +52,10 @@ export default function page() {
     }
   };
 
-  if (isLoading) return <div>Loading...</div>
+  if (isLoading) return <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+    <div className="w-5 h-5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+  </div>
+  
   if (error) return <div>Error loading places</div>
   // if (!data) {
   //   notFound(); // This will show the 404 page

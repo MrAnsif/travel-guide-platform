@@ -60,7 +60,7 @@ export default function ThemeToggleButton({
       onClick={toggleTheme}
       variant="ghost"
       size="icon"
-      className="w-9 p-0 h-9 relative group"
+      className="w-9 p-0 h-9 relative group border border-dashed border-foreground hover:border-solid transition-all duration-700 "
       name="Theme Toggle Button">
       <SunIcon
         className="size-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
@@ -70,12 +70,12 @@ export default function ThemeToggleButton({
       {showLabel && (
         <>
           <span
-            className="hidden group-hover:block border rounded-full px-2 absolute -top-10">
+            className="hidden group-hover:block border rounded-md px-1 absolute -top-10">
             {" "}
             variant = {variant}
           </span>
           <span
-            className="hidden group-hover:block border rounded-full px-2 absolute -bottom-10">
+            className="hidden group-hover:block border rounded-md px-1 absolute -bottom-10">
             {" "}
             start = {start}
           </span>

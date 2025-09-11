@@ -19,7 +19,7 @@ export async function GET(req, { params }) {
 
         if (!place) {
             return NextResponse.json(
-                { error: 'No plaace fonuded' },
+                { error: 'No place founded' },
                 { status: 404 }
             )
         }
