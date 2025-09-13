@@ -86,7 +86,7 @@ export default function page() {
                   </div>
                 </Link>
               )) :
-              <div className='text-muted-foreground'>No featured destination to suggest.</div>
+              ( !isLoading && !error && <div className='text-muted-foreground'>No featured destination to suggest.</div>)
             }
           </div>
         </div>
