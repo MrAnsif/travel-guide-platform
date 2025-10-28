@@ -61,7 +61,7 @@ export default function SearchComponent() {
   }
 
   return (
-    <div className="w-full max-w-lg relative z-10 ">
+    <div className="w-full max-w-lg relative z-10 pointer-events-auto">
       <form onSubmit={handleSubmit} className="relative flex items-center">
         <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
           <Search className="h-5 w-5" />

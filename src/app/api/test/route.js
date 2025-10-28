@@ -1,4 +1,4 @@
-import { getPlaceBySlug, insertPlace } from "../../../lib/Places";
+import { getPlaceBySlug } from "../../../lib/Places";
 import { NextResponse } from "next/server";
 
 export async function GET() {

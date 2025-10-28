@@ -3,6 +3,7 @@
 import React from 'react'
 import Link from 'next/link';
 import SearchComponent from './components/SearchHome';
+import ColorBends from './components/ui/ColorBends'
 import useSWR from 'swr';
 
 export default function page() {
@@ -20,23 +21,32 @@ export default function page() {
 
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen text-foreground">
+      <ColorBends
+        // colors={["#ff5c7a", "#8a5cff", "#00ffd1"]}
+        rotation={0}
+        speed={0.3}
+        scale={1}
+        frequency={1}
+        warpStrength={1}
+        mouseInfluence={1}
+        parallax={0.6}
+        noise={0.08}
+        transparent
+      />
       {/* Hero Section */}
-      <div className="relative px-4 sm:px-6 lg:px-8 xl:px-40">
+      <div className=" px-4 sm:px-6 lg:px-8 xl:px-40">
         <div className="mx-auto max-w-4xl">
-          <div className="relative rounded-none sm:rounded-xl">
+          <div className="relative rounded-none sm:rounded-xl pointer-events-none">
             <div
               className="flex min-h-[400px] sm:min-h-[480px] flex-col gap-6 bg-cover bg-center bg-no-repeat items-center justify-center p-4 sm:p-8 rounded-none sm:rounded-xl"
-              style={{
-                backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%), url("https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=1200&h=800&fit=crop")`
-              }}
             >
               <div className="flex flex-col gap-4 text-center max-w-4xl">
-                <h1 className="text-white text-3xl sm:text-4xl lg:text-5xl font-black leading-tight tracking-tight">
-                  Discover the Heart of Every Neighborhood
+                <h1 className="text-foreground text-3xl sm:text-4xl lg:text-5xl font-sans font-semibold leading-tight tracking-tight">
+                  See Beyond the Map
                 </h1>
-                <p className="text-white/90 text-sm sm:text-base lg:text-lg font-normal leading-relaxed max-w-3xl mx-auto">
-                  Uncover the unique stories, hidden gems, and essential insights that define each community. From local culture to safety tips, we provide the knowledge you need to feel at home, wherever you go.
+                <p className="text-foreground text-sm sm:text-base lg:text-lg font-normal leading-relaxed max-w-3xl mx-auto">
+                  <i>Find key details about any neighborhood with our <br /> <b>Smart Search</b> — type a name, and get personalized insights in seconds.</i>
                 </p>
               </div>
 
@@ -86,7 +96,7 @@ export default function page() {
                   </div>
                 </Link>
               )) :
-              ( !isLoading && !error && <div className='text-muted-foreground'>No featured destination to suggest.</div>)
+              (!isLoading && !error && <div className='text-muted-foreground'>No featured destination to suggest.</div>)
             }
           </div>
         </div>
