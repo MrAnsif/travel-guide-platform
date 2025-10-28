@@ -1,27 +1,41 @@
 import React from 'react';
 import styled from 'styled-components';
+import CountUp from './ui/CountUp';
+
 
 const Loader = () => {
   return (
-    <StyledWrapper>
-      {/* <div className="loader" id="loader"> */}
-        <div className="loader-wrapper ">
-          <span className="loader-letter">G</span>
-          <span className="loader-letter">e</span>
-          <span className="loader-letter">n</span>
-          <span className="loader-letter">e</span>
-          <span className="loader-letter">r</span>
-          <span className="loader-letter">a</span>
-          <span className="loader-letter">t</span>
-          <span className="loader-letter">i</span>
-          <span className="loader-letter">n</span>
-          <span className="loader-letter">g</span>
-          <span className="loader-letter">.</span>
-          <span className="loader-letter">.</span>
-          <span className="loader-letter">.</span>
-          <div className="loader-circle" />
-        </div>
-      {/* </div> */}
+    <StyledWrapper className='flex flex-col items-center justify-center'>
+      <div className="loader-wrapper ">
+        <span className="loader-letter">G</span>
+        <span className="loader-letter">e</span>
+        <span className="loader-letter">n</span>
+        <span className="loader-letter">e</span>
+        <span className="loader-letter">r</span>
+        <span className="loader-letter">a</span>
+        <span className="loader-letter">t</span>
+        <span className="loader-letter">i</span>
+        <span className="loader-letter">n</span>
+        <span className="loader-letter">g</span>
+        <span className="loader-letter">.</span>
+        <span className="loader-letter">.</span>
+        <span className="loader-letter">.</span>
+        <div className="loader-circle" />
+      </div>
+      <div className='py-1.5'>
+
+        <CountUp
+          from={0}
+          to={100}
+          separator=","
+          direction="up"
+          duration={20}
+          className="count-up-text"
+        />
+        <span> %</span>
+      </div>
+      <p className='text-ring text-sm text-center px-3'>You’ll be redirected to the new place page in a moment!</p>
+
     </StyledWrapper>
   );
 }
@@ -45,8 +59,8 @@ const StyledWrapper = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 150px;
-    height: 150px;
+    width: 130px;
+    height: 130px;
     font-family: "Inter", sans-serif;
     font-size: 1.1em;
     font-weight: 300;

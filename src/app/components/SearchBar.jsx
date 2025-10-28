@@ -85,8 +85,8 @@ export default function SearchBar() {
 
       {/* ai generation popup */}
       {ispopup && (
-        <div className="backdrop-blur-md w-screen h-screen fixed inset-0 z-50 flex items-center justify-center">
-          <div className="relative flex bg-popover border w-2xs h-60 justify-center items-center rounded-2xl" >
+        <div className="backdrop-blur-sm bg-black/50 w-screen h-screen fixed inset-0 z-50 flex items-center justify-center">
+          <div className="relative flex bg-popover/25  border w-2xs h-60 justify-center items-center rounded-2xl" >
             <Loader />
             <X className='cursor-pointer absolute top-0 right-0 m-3' onClick={() => setIspopup(false)} />
           </div>

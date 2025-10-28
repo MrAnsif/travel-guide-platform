@@ -86,7 +86,7 @@ export default function page() {
                       </div>
                     </div>
                     <div className="space-y-1">
-                      <h3 className="text-foreground text-base font-medium leading-normal ">
+                      <h3 className="relative text-foreground text-base font-medium leading-normal ">
                         {destination.name}
                       </h3>
                       <p className="text-muted-foreground text-sm font-normal leading-normal">
