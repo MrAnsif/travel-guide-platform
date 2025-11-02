@@ -5,8 +5,10 @@ import Link from 'next/link';
 import SearchComponent from './components/SearchHome';
 import ColorBends from './components/ui/ColorBends'
 import useSWR from 'swr';
+import { useTour } from '../hooks/useTour'
 
 export default function page() {
+  useTour()
 
   const fetcher = (...args) => fetch(...args).then(res => res.json());
 
@@ -51,7 +53,7 @@ export default function page() {
               </div>
 
               {/* Search Bar */}
-              <SearchComponent />
+              <SearchComponent className=''/>
 
             </div>
           </div>

@@ -2,9 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 import ThemeToggleButton from '../components/ui/theme-toggle-button'
 
-
 const Head = () => {
-
     const navItem = [
         { name: 'Home', link: '/' },
         { name: 'Explore', link: '/place' },
@@ -12,9 +10,9 @@ const Head = () => {
     ]
 
     return (
-        <div className='flex justify-between items-center px-8 py-4 gap-5 sticky top-0 z-40  backdrop-blur-lg'>
-            <div className='flex justify-between w-full '>
-                <Link href='/' className='flex items-center gap-3' >
+        <div className='flex justify-between items-center px-8 py-4 gap-5 sticky top-0 z-40 backdrop-blur-lg'>
+            <div className='flex justify-between w-full'>
+                <Link href='/' className='flex items-center gap-3'>
                     <div className='size-5'>
                         <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -27,14 +25,18 @@ const Head = () => {
                 </Link>
                 <div className='flex flex-wrap gap-8'>
                     {navItem.map((item, index) => (
-                        <Link key={index} href={item.link} className="text-sm md:text-base px-2 py-1.5 md:px-3 md:py-1.5 border hover:border-foreground hover:border-dashed transition-all duration-700 rounded-md" >
+                        <Link 
+                            key={index} 
+                            href={item.link} 
+                            className="text-sm md:text-base px-2 py-1.5 md:px-3 md:py-1.5 border hover:border-foreground hover:border-dashed transition-all duration-700 rounded-md"
+                        >
                             <span>{item.name}</span>
                         </Link>
                     ))}
                 </div>
             </div>
 
-            <div >
+            <div className='theme-toggle-tour'>
                 <ThemeToggleButton variant="circle-blur" start="top-right" />
             </div>
         </div>
