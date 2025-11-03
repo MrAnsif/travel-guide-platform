@@ -2,7 +2,7 @@
 
 A comprehensive travel guide platform providing local area insights, culture data, and safety information to help users understand a place before they arrive.
 
-[![Watch Demo]](https://localinsights.vercel.app/videos/ui-clip.mp4)
+[![Watch Demo](https://localinsights.vercel.app/videos/ui-gif.gif)](https://localinsights.vercel.app/videos/ui-clip.mp4)
 
 ## Features and Functionality
 
