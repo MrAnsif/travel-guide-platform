@@ -1,6 +1,6 @@
 export async function generatePlaceData(placeName, placeDetails) {
     try {
-        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        const response = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
@@ -9,7 +9,7 @@ export async function generatePlaceData(placeName, placeDetails) {
                 'X-Title': 'Travel Place Generator' // Add title for OpenRouter
             },
             body: JSON.stringify({
-                model: "mistralai/mistral-small-3.1-24b-instruct:free",
+                model: "meta/llama-4-maverick-17b-128e-instruct",
                 messages: [
                     {
                         role: "system",
@@ -95,13 +95,18 @@ Ensure to respond in simple English.`
 
         const data = await response.json();
         const content = data.choices[0]?.message?.content;
-        const cleanContent = content.replace(/^```json\s*|\s*```$/g, '').trim();
 
         console.log('AI res:', content)
 
         if (!content) {
             throw new Error('No content generated');
         }
+
+        // Strip markdown code fences (```json, ```, ```javascript, etc.) that the model may wrap its response in
+        const cleanContent = content
+            .replace(/^```[a-zA-Z]*\s*/m, '')  // remove opening fence with optional language tag
+            .replace(/\s*```\s*$/m, '')          // remove closing fence
+            .trim();
 
         // Parse and return structured data
         return parseAIResponse(cleanContent, placeName);
