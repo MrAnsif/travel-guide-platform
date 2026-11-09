@@ -355,11 +355,16 @@ export async function searchOrValidatePlace(query, limit = 8) {
 }
 
 export async function generateAndSavePlace(placeName, placeDetails) {
-    // 3. Generate new place data
+    // Phase 1: AI generation — if this throws, NO DB write happens
     console.log(`Generating new place data for: ${placeName, placeDetails}`);
     const generatedData = await generatePlaceData(placeName, placeDetails);
 
-    // 4. Save to database
+    // Phase 2: Validate generated data has minimum required fields
+    if (!generatedData || !generatedData.name || !generatedData.country) {
+        throw new Error('AI generation returned insufficient data');
+    }
+
+    // Phase 3: DB write — only reached if AI succeeded and data is valid
     const savedPlace = await saveGeneratedPlace(generatedData);
 
     // 5. Return the generated result

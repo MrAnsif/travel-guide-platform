@@ -9,7 +9,7 @@ export async function generatePlaceData(placeName, placeDetails) {
                 'X-Title': 'Travel Place Generator' // Add title for OpenRouter
             },
             body: JSON.stringify({
-                model: "meta/llama-4-maverick-17b-128e-instruct",
+                model: "nvidia/nemotron-3.5-bolt-e4b",
                 messages: [
                     {
                         role: "system",
@@ -90,7 +90,16 @@ Ensure to respond in simple English.`
         });
 
         if (!response.ok) {
-            throw new Error(`AI API error: ${response.statusText}`);
+            const status = response.status;
+            if (status === 401 || status === 403) {
+                throw new Error(`AI API error: Unauthorized (check API key)`);
+            } else if (status === 410 || status === 404) {
+                throw new Error(`AI API error: Model not found or deprecated`);
+            } else if (status === 429) {
+                throw new Error(`AI API error: Rate limited`);
+            } else {
+                throw new Error(`AI API error: ${response.status} ${response.statusText}`);
+            }
         }
 
         const data = await response.json();
@@ -132,6 +141,12 @@ async function parseAIResponse(content, placeName) {
 
     try {
         const parsed = JSON.parse(content);
+
+        // Guard: refuse to build a record if AI returned empty/placeholder data
+        if (!parsed.name || !parsed.country || !parsed.description) {
+            throw new Error('AI returned incomplete place data');
+        }
+
         return {
             name: parsed.name || placeName,
             slug: parsed.slug || generateSlug(placeName),

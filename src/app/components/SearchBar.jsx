@@ -12,6 +12,7 @@ import Loader from './GeneratingLoader'
 
 export default function SearchBar() {
   const [ispopup, setIspopup] = useState(false)
+  const [generationError, setGenerationError] = useState(null)
   const { query, setQuery, results, isLoading, error } = useSearch();
   const router = useRouter();
   const handleSubmit = (e) => {
@@ -28,8 +29,22 @@ export default function SearchBar() {
     setQuery('');
   };
 
+  function getGenerationErrorMessage(errorCode) {
+    switch (errorCode) {
+      case 'AI_SERVICE_ERROR':
+        return 'Our AI service is temporarily unavailable. Please try again in a moment.';
+      case 'AI_PARSE_ERROR':
+        return 'Could not process place data. Please try a different location.';
+      case 'DB_SAVE_ERROR':
+        return 'Failed to save place data. Please try again.';
+      default:
+        return 'Something went wrong. Please try again.';
+    }
+  }
+
   const handleResultGeneration = async (place) => {
     try {
+      setGenerationError(null);
       setQuery('');
       setIspopup(true)
 
@@ -50,14 +65,13 @@ export default function SearchBar() {
       if (data.success) {
         router.push(`/place/${data.data.results[0].slug}`);
       } else {
-        throw new Error(data.error);
+        throw new Error(data.errorCode || 'GENERATION_FAILED');
       }
 
     } catch (error) {
       console.error('Generation error:', error);
-      // Handle error in UI
+      setGenerationError(getGenerationErrorMessage(error.message));
     } finally {
-      setIspopup(false);
       setQuery('');
     }
   }
@@ -86,9 +100,22 @@ export default function SearchBar() {
       {/* ai generation popup */}
       {ispopup && (
         <div className="backdrop-blur-sm bg-black/50 w-screen h-screen fixed inset-0 z-50 flex items-center justify-center">
-          <div className="relative flex bg-popover/25  border w-2xs h-60 justify-center items-center rounded-2xl" >
-            <Loader />
-            <X className='cursor-pointer absolute top-0 right-0 m-3' onClick={() => setIspopup(false)} />
+          <div className="relative flex flex-col bg-popover/25 border w-2xs h-60 justify-center items-center rounded-2xl gap-3 p-6">
+            <X className='cursor-pointer absolute top-0 right-0 m-3' onClick={() => { setIspopup(false); setGenerationError(null); }} />
+            {generationError ? (
+              <>
+                <div className="text-destructive text-4xl">⚠</div>
+                <p className="text-sm text-center text-foreground">{generationError}</p>
+                <button
+                  onClick={() => { setIspopup(false); setGenerationError(null); }}
+                  className="text-xs text-muted-foreground underline mt-1"
+                >
+                  Dismiss
+                </button>
+              </>
+            ) : (
+              <Loader />
+            )}
           </div>
         </div>
       )}
